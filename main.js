@@ -12,12 +12,12 @@ const costNameInput = document.querySelector(".costNameInput");
 const costAmountInput = document.querySelector(".costAmountInput");
 const addCostBtn = document.querySelector(".addCostBtn");
 const tableBody = document.querySelector("tbody");
+const addBudgetErrorText = document.querySelector(".addBudgetError");
+const addCostErrorText = document.querySelector(".addCostError");
 let budget = 0;
 let balance = 0;
 let costs = 0;
 let costsItems = [];
-let addBudgetInputEmptyError = false;
-let costInputEmptyError = false;
 //##################//
 //#### HANDELES ####//
 //##################//
@@ -62,11 +62,16 @@ const addBudget = (input) => {
     updateDataToServer();
     setBalance();
     setBudget();
+    addBudgetErrorText.textContent = "";
+  }
+  if (input === "") {
+    addBudgetErrorText.textContent = "این فیلد نمی تواند خالی باشد.";
   }
 };
 const addCost = (costName, costAmount) => {
-  tableBody.innerHTML = "";
   if (costAmount > 0 && costName !== "") {
+    tableBody.innerHTML = "";
+    addCostErrorText.textContent = "";
     costs += Number(costAmount);
     balance = budget - Number(costs);
     setCosts();
@@ -102,6 +107,8 @@ const addCost = (costName, costAmount) => {
       });
     });
     updateDataToServer();
+  } else if (costAmount === "" || costAmount === "") {
+    addCostErrorText.textContent = "پر کردن هردو فیلد الزامی است.";
   }
 };
 const renderTable = () => {
@@ -153,7 +160,7 @@ const handleGetData = async () => {
 };
 handleGetData();
 //#####################//
-//#### LISITENERS ####//
+//#### LISITENERS #####//
 //####################//
 calcBudgetBtn.addEventListener("click", () => {
   addBudget(budgetInput.value);

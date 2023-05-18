@@ -204,3 +204,7 @@ td {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.emptyErrorText {
+  font-size: 16px;
+  color: red;
+}

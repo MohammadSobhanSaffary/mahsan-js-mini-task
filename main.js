@@ -1,4 +1,7 @@
 "use strict";
+//###################//
+//#### VARIABLES ####//
+//###################//
 const BASE_URL = "https://646539449c09d77a62e76d06.mockapi.io";
 const budgetBox = document.querySelector(".budget");
 const balanceBox = document.querySelector(".balance");
@@ -15,11 +18,9 @@ let costs = 0;
 let costsItems = [];
 let addBudgetInputEmptyError = false;
 let costInputEmptyError = false;
-
 //##################//
 //#### HANDELES ####//
 //##################//
-
 const updateDataToServer = async () => {
   try {
     const res = await fetch(`${BASE_URL}/wallet/1`, {
@@ -51,12 +52,9 @@ const generateUuid = () => {
     }
   );
 };
-
 const setBudget = () => (budgetBox.textContent = budget);
-
 const setBalance = () => (balanceBox.textContent = balance);
 const setCosts = () => (costsBox.textContent = costs);
-
 const addBudget = (input) => {
   if (input >= 0) {
     budget += Number(input);

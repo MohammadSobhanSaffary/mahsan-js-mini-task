@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./main.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <main>
+      <aside>
+        <h2>مدیریت هزینه ها</h2>
+        <div class="inputWrapperBox borderGreen">
+          <div class="inputAndTitleBox">
+            <span class="alignSelfStart"
+              >لطفا بودجه اولیه خود را وارد کنید.</span
+            >
+            <input type="number" class="borderGray budgetInput" />
+          </div>
+          <button class="calcBudgetBtn alignSelfEnd">محاسبه</button>
+        </div>
+        <div class="inputWrapperBox borderRed">
+          <div class="inputAndTitleBox">
+            <span class="alignSelfStart">لطفا عنوان هزینه را وارد کنید.</span>
+            <input type="text" class="borderGray costNameInput" />
+          </div>
+          <div class="inputAndTitleBox">
+            <span class="alignSelfStart"
+              >لطفا مقدار عنوان هزینه را وارد کنید.</span
+            >
+            <input type="number" class="borderGray costAmountInput" />
+          </div>
+          <button class="addCostBtn alignSelfEnd">اضافه کردن هزینه</button>
+        </div>
+      </aside>
+      <section>
+        <div class="mainBoxesWrapper">
+          <div class="titlesBox">
+            <span class="titleText">بودجه</span>
+            <img src="./assets/images/budget.png" />
+            <span class="fs40 textGreen"
+              >$<span class="budget fs40 textGreen">0</span></span
+            >
+          </div>
+          <div class="titlesBox">
+            <span class="titleText">هزینه ها</span>
+            <img src="./assets/images/card.png" />
+            <span class="fs40 textRed"
+              >$<span class="costs fs40 textRed">0</span></span
+            >
+          </div>
+          <div class="titlesBox">
+            <span class="titleText">موجودی</span>
+            <img src="./assets/images/dollar.png" />
+            <span class="fs40 textGreen"
+              >$<span class="balance fs40 textGreen">0</span></span
+            >
+          </div>
+        </div>
+        <div class="tableWrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>عملیات</th>
+                <th>مقدار هزینه</th>
+                <th>نوع هزینه</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,206 @@
+@font-face {
+  font-family: "Vazir";
+  src: url("./assets/vazir-font-v16.1.0/Vazir-Medium.ttf");
+}
+@font-face {
+  font-family: "VazirB";
+  src: url("./assets/vazir-font-v16.1.0/Vazir-Bold.ttf");
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Vazir";
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+.inputWrapperBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  gap: 2rem;
+  border-radius: 5px;
+  padding: 1rem;
+}
+.inputAndTitleBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.borderRed {
+  border: 2px solid tomato;
+}
+.borderGreen {
+  border: 2px solid green;
+}
+.borderGray {
+  border: 1px solid gray;
+}
+aside {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 50px;
+}
+section {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+input {
+  outline: 0;
+  border: 0;
+  border-radius: 5px;
+  width: 300px;
+  height: 1.5rem;
+  padding: 5px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.calcBudgetBtn {
+  font-family: "Vazir";
+  cursor: pointer;
+  border-radius: 5px;
+  width: 80px;
+  height: 30px;
+  border: 1px solid green;
+  color: green;
+  text-align: center;
+  background-color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 30px;
+}
+.calcBudgetBtn:hover {
+  background-color: green;
+  color: #fff;
+  transition: 0.5s;
+}
+.addCostBtn {
+  cursor: pointer;
+  width: 150px;
+  height: 30px;
+  border-radius: 5px;
+  border: 0px;
+  background-color: red;
+  color: #fff;
+  font-size: 16px;
+  font-family: "Vazir";
+  text-align: center;
+  line-height: 30px;
+}
+.addCostBtn:hover {
+  background-color: #fff;
+  border: 1px solid red;
+  color: red;
+  transition: 0.5s;
+}
+.alignSelfStart {
+  align-self: flex-start;
+  padding-right: 5px;
+}
+.alignSelfEnd {
+  align-self: flex-end;
+  padding-left: 5px;
+}
+.titlesBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  direction: ltr;
+}
+.mainBoxesWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rem;
+}
+.titleText {
+  font-size: 28px;
+  color: #2e688c;
+  font-family: "VazirB";
+}
+img {
+  width: 128px;
+  height: 128px;
+}
+.fs40 {
+  font-size: 40px;
+}
+.textRed {
+  color: red;
+}
+.textGreen {
+  color: green;
+}
+table {
+  width: 70%;
+  border-collapse: collapse;
+}
+th,
+td {
+  width: 200px;
+  height: 40px;
+  text-align: center;
+  padding: 10px;
+  font-size: 28px;
+  font-family: "Vazir";
+  font-weight: 400;
+}
+td {
+  color: tomato;
+}
+.binIcon {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+}
+.tableWrapper {
+  width: 100%;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+  direction: ltr;
+  margin-top: 10px;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

@@ -36,7 +36,6 @@ const updateDataToServer = async () => {
       }),
     });
     const data = await res.json();
-    console.log(data);
   } catch (err) {
     console.log(err);
   }
@@ -142,7 +141,6 @@ const handleGetData = async () => {
   try {
     const res = await fetch(`${BASE_URL}/wallet`);
     const data = await res.json();
-    console.log(data[0]);
     costs = data[0].totalCosts;
     budget = data[0].budget;
     balance = data[0].balance;

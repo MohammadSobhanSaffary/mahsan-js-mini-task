@@ -70,7 +70,6 @@ const addBudget = (input) => {
 };
 const addCost = (costName, costAmount) => {
   if (costAmount > 0 && costName !== "") {
-    tableBody.innerHTML = "";
     addCostErrorText.textContent = "";
     costs += Number(costAmount);
     balance = budget - Number(costs);
@@ -81,31 +80,7 @@ const addCost = (costName, costAmount) => {
       amount: costAmount,
       id: generateUuid(),
     });
-    costsItems.forEach((el) => {
-      const tr = document.createElement("tr");
-      const amountTd = document.createElement("td");
-      const nameTd = document.createElement("td");
-      const actiontTd = document.createElement("td");
-      const binIcon = document.createElement("img");
-      amountTd.textContent = el.amount;
-      nameTd.textContent = el.name;
-      binIcon.srcset = "./assets/images/trash-bin.png";
-      binIcon.className = "binIcon";
-      actiontTd.appendChild(binIcon);
-      tr.appendChild(actiontTd);
-      tr.appendChild(amountTd);
-      tr.appendChild(nameTd);
-      tableBody.appendChild(tr);
-      actiontTd.addEventListener("click", () => {
-        costsItems = costsItems.filter((item) => item.id !== el.id);
-        balance += Number(el.amount);
-        costs -= Number(el.amount);
-        updateDataToServer();
-        setBalance();
-        setCosts();
-        tableBody.removeChild(tr);
-      });
-    });
+    renderTable();
     updateDataToServer();
   } else if (costAmount === "" || costAmount === "") {
     addCostErrorText.textContent = "پر کردن هردو فیلد الزامی است.";

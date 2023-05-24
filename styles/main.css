@@ -1,10 +1,10 @@
 @font-face {
   font-family: "Vazir";
-  src: url("./assets/vazir-font-v16.1.0/Vazir-Medium.ttf");
+  src: url("../assets/vazir-font-v16.1.0/Vazir-Medium.ttf");
 }
 @font-face {
   font-family: "VazirB";
-  src: url("./assets/vazir-font-v16.1.0/Vazir-Bold.ttf");
+  src: url("../assets/vazir-font-v16.1.0/Vazir-Bold.ttf");
 }
 html,
 body {
@@ -185,7 +185,7 @@ td {
   justify-content: center;
   align-items: flex-start;
   scroll-behavior: smooth;
-  overflow-y: scroll;
+  overflow-y: auto;
   direction: ltr;
   margin-top: 10px;
 }
@@ -207,4 +207,24 @@ td {
 .emptyErrorText {
   font-size: 16px;
   color: red;
+}
+.refresh {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+.refresh:hover {
+  background-color: #888;
+  opacity: 50%;
+  border-radius: 50%;
+}
+.refreshBtn,
+.refreshBtn:hover,
+.refreshBtn:focus {
+  border: 0;
+  background-color: #fff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
 }

@@ -14,6 +14,7 @@ const addCostBtn = document.querySelector(".addCostBtn");
 const tableBody = document.querySelector("tbody");
 const addBudgetErrorText = document.querySelector(".addBudgetError");
 const addCostErrorText = document.querySelector(".addCostError");
+const refreshBtn = document.querySelector(".refreshBtn");
 let budget = 0;
 let balance = 0;
 let costs = 0;
@@ -56,20 +57,19 @@ const setBudget = () => (budgetBox.textContent = budget);
 const setBalance = () => (balanceBox.textContent = balance);
 const setCosts = () => (costsBox.textContent = costs);
 const addBudget = (input) => {
-  if (input >= 0) {
+  if (Number(input) >= 0) {
     budget += Number(input);
     balance = budget - costs;
     updateDataToServer();
     setBalance();
     setBudget();
     addBudgetErrorText.textContent = "";
-  }
-  if (input === "") {
+  } else if (input.trim() === "") {
     addBudgetErrorText.textContent = "این فیلد نمی تواند خالی باشد.";
   }
 };
 const addCost = (costName, costAmount) => {
-  if (costAmount > 0 && costName !== "") {
+  if (costAmount > 0 && costName.trim() !== "") {
     addCostErrorText.textContent = "";
     costs += Number(costAmount);
     balance = budget - Number(costs);
@@ -82,7 +82,7 @@ const addCost = (costName, costAmount) => {
     });
     renderTable();
     updateDataToServer();
-  } else if (costAmount === "" || costAmount === "") {
+  } else if (costAmount.trim() === "" || costAmount.trim() === "") {
     addCostErrorText.textContent = "پر کردن هردو فیلد الزامی است.";
   }
 };
@@ -114,6 +114,7 @@ const renderTable = () => {
     });
   });
 };
+
 //####################//
 //#### FETCH_DATA ####//
 //####################//
@@ -145,4 +146,15 @@ addCostBtn.addEventListener("click", () => {
   addCost(costNameInput.value, costAmountInput.value);
   costNameInput.value = null;
   costAmountInput.value = null;
+});
+refreshBtn.addEventListener("click", () => {
+  budget = 0;
+  costs = 0;
+  balance = 0;
+  costsItems = [];
+  setBudget();
+  setCosts();
+  setBalance();
+  updateDataToServer();
+  renderTable();
 });

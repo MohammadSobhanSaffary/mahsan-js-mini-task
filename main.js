@@ -85,6 +85,7 @@ const addCost = (costName, costAmount) => {
   } else if (costAmount.trim() === "" || costAmount.trim() === "") {
     addCostErrorText.textContent = "پر کردن هردو فیلد الزامی است.";
   }
+  handleShowTable();
 };
 const renderTable = () => {
   tableBody.innerHTML = "";
@@ -111,10 +112,15 @@ const renderTable = () => {
       setBalance();
       setCosts();
       tableBody.removeChild(tr);
+      handleShowTable();
     });
   });
 };
-
+const handleShowTable = () => {
+  costsItems.length === 0
+    ? (document.querySelector("table").style.visibility = "hidden")
+    : (document.querySelector("table").style.visibility = "visible");
+};
 //####################//
 //#### FETCH_DATA ####//
 //####################//
@@ -130,6 +136,7 @@ const handleGetData = async () => {
     setBudget();
     setBalance();
     renderTable();
+    handleShowTable();
   } catch (err) {
     console.log(err);
   }

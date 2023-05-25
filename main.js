@@ -3,18 +3,6 @@
 //#### VARIABLES ####//
 //###################//
 const BASE_URL = "https://646539449c09d77a62e76d06.mockapi.io";
-const budgetBox = document.querySelector(".budget");
-const balanceBox = document.querySelector(".balance");
-const costsBox = document.querySelector(".costs");
-const calcBudgetBtn = document.querySelector(".calcBudgetBtn");
-const budgetInput = document.querySelector(".budgetInput");
-const costNameInput = document.querySelector(".costNameInput");
-const costAmountInput = document.querySelector(".costAmountInput");
-const addCostBtn = document.querySelector(".addCostBtn");
-const tableBody = document.querySelector("tbody");
-const addBudgetErrorText = document.querySelector(".addBudgetError");
-const addCostErrorText = document.querySelector(".addCostError");
-const refreshBtn = document.querySelector(".refreshBtn");
 let budget = 0;
 let balance = 0;
 let costs = 0;
@@ -24,7 +12,7 @@ let costsItems = [];
 //##################//
 const updateDataToServer = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/wallet/1`, {
+    await fetch(`${BASE_URL}/wallet/1`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +25,6 @@ const updateDataToServer = async () => {
         id: "1",
       }),
     });
-    const data = await res.json();
   } catch (err) {
     console.log(err);
   }
@@ -53,41 +40,98 @@ const generateUuid = () => {
     }
   );
 };
-const setBudget = () => (budgetBox.textContent = budget);
-const setBalance = () => (balanceBox.textContent = balance);
-const setCosts = () => (costsBox.textContent = costs);
-const addBudget = (input) => {
-  if (Number(input) >= 0) {
-    budget += Number(input);
+const setBudget = () => {
+  const budgetBox = document.querySelector(".budget");
+  budgetBox.textContent = budget === 0 ? "" : budget;
+};
+const setBalance = () => {
+  const balanceBox = document.querySelector(".balance");
+  balanceBox.textContent = balance === 0 ? "" : balance;
+};
+const setCosts = () => {
+  const costsBox = document.querySelector(".costs");
+  costsBox.textContent = costs === 0 ? "" : costs;
+};
+const addBudget = async () => {
+  const addBudgetErrorText = document.querySelector(".addBudgetError");
+  const budgetInput = document.querySelector(".budgetInput");
+  if (Number(budgetInput.value) >= 0 && budgetInput.value !== "") {
+    budget += Number(budgetInput.value);
     balance = budget - costs;
-    updateDataToServer();
-    setBalance();
-    setBudget();
-    addBudgetErrorText.textContent = "";
-  } else if (input.trim() === "") {
+    const res = await fetch(`${BASE_URL}/wallet/1`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        totalCosts: costs,
+        budget: budget,
+        balance: balance,
+        costsItems: costsItems,
+        id: "1",
+      }),
+    });
+    if (res.ok) {
+      setBalance();
+      setBudget();
+      addBudgetErrorText.textContent = "";
+    } else {
+      budget -= Number(budgetInput.value);
+      balance = budget - costs;
+    }
+  } else if (budgetInput.value.trim() === "") {
+    console.log(addBudgetErrorText);
     addBudgetErrorText.textContent = "این فیلد نمی تواند خالی باشد.";
   }
+  console.log(budgetInput.value.trim() === "");
+  budgetInput.value = null;
 };
-const addCost = (costName, costAmount) => {
-  if (costAmount > 0 && costName.trim() !== "") {
+const addCost = async () => {
+  const costAmountInput = document.querySelector(".costAmountInput");
+  const costNameInput = document.querySelector(".costNameInput");
+  const addCostErrorText = document.querySelector(".addCostError");
+  if (costAmountInput.value > 0 && costNameInput.value.trim() !== "") {
     addCostErrorText.textContent = "";
-    costs += Number(costAmount);
-    balance = budget - Number(costs);
-    setCosts();
-    setBalance();
-    costsItems.push({
-      name: costName,
-      amount: costAmount,
-      id: generateUuid(),
+    costs += Number(costAmountInput.value);
+    balance = budget - costs;
+    const res = await fetch(`${BASE_URL}/wallet/1`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        totalCosts: costs,
+        budget: budget,
+        balance: balance,
+        costsItems: costsItems,
+        id: "1",
+      }),
     });
-    renderTable();
-    updateDataToServer();
-  } else if (costAmount.trim() === "" || costAmount.trim() === "") {
+    if (res.ok) {
+      setCosts();
+      setBalance();
+      costsItems.push({
+        name: costNameInput.value,
+        amount: +costAmountInput.value,
+        id: generateUuid(),
+      });
+      renderTable();
+    } else {
+      costs -= Number(costAmountInput.value);
+      balance = budget + Number(costs);
+    }
+  } else if (
+    costAmountInput.value.trim() === "" ||
+    costNameInput.value.trim() === ""
+  ) {
     addCostErrorText.textContent = "پر کردن هردو فیلد الزامی است.";
   }
+  costNameInput.value = null;
+  costAmountInput.value = null;
   handleShowTable();
 };
 const renderTable = () => {
+  const tableBody = document.querySelector("tbody");
   tableBody.innerHTML = "";
   costsItems.forEach((el) => {
     const tr = document.createElement("tr");
@@ -117,13 +161,44 @@ const renderTable = () => {
   });
 };
 const handleShowTable = () => {
-  costsItems.length === 0
-    ? (document.querySelector("table").style.visibility = "hidden")
-    : (document.querySelector("table").style.visibility = "visible");
+  if (costsItems.length === 0) {
+    document.querySelector("table").classList.remove("visible");
+    document.querySelector("table").classList.add("hidden");
+  } else {
+    document.querySelector("table").classList.remove("hidden");
+    document.querySelector("table").classList.add("visible");
+  }
+};
+
+const handleRefresh = async () => {
+  const res = await fetch(`${BASE_URL}/wallet/1`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      totalCosts: 0,
+      budget: 0,
+      balance: 0,
+      costsItems: [],
+      id: "1",
+    }),
+  });
+  if (res.ok) {
+    budget = 0;
+    balance = 0;
+    costs = 0;
+    costsItems = [];
+    setBudget();
+    setCosts();
+    setBalance();
+    renderTable();
+  }
 };
 //####################//
 //#### FETCH_DATA ####//
 //####################//
+
 const handleGetData = async () => {
   try {
     const res = await fetch(`${BASE_URL}/wallet`);
@@ -136,32 +211,9 @@ const handleGetData = async () => {
     setBudget();
     setBalance();
     renderTable();
-    handleShowTable();
   } catch (err) {
     console.log(err);
   }
+  handleShowTable();
 };
 handleGetData();
-//#####################//
-//#### LISITENERS #####//
-//####################//
-calcBudgetBtn.addEventListener("click", () => {
-  addBudget(budgetInput.value);
-  budgetInput.value = null;
-});
-addCostBtn.addEventListener("click", () => {
-  addCost(costNameInput.value, costAmountInput.value);
-  costNameInput.value = null;
-  costAmountInput.value = null;
-});
-refreshBtn.addEventListener("click", () => {
-  budget = 0;
-  costs = 0;
-  balance = 0;
-  costsItems = [];
-  setBudget();
-  setCosts();
-  setBalance();
-  updateDataToServer();
-  renderTable();
-});

@@ -19,7 +19,9 @@
             <input type="number" class="borderGray budgetInput" />
             <span class="emptyErrorText addBudgetError"></span>
           </div>
-          <button class="calcBudgetBtn alignSelfEnd">محاسبه</button>
+          <button onclick="addBudget()" class="calcBudgetBtn alignSelfEnd">
+            محاسبه
+          </button>
         </div>
         <div class="inputWrapperBox borderRed">
           <div class="inputAndTitleBox">
@@ -27,17 +29,17 @@
             <input type="text" class="borderGray costNameInput" />
           </div>
           <div class="inputAndTitleBox">
-            <span class="alignSelfStart"
-              >لطفا مقدار عنوان هزینه را وارد کنید.</span
-            >
+            <span class="alignSelfStart">لطفا مقدار هزینه را وارد کنید.</span>
             <input type="number" class="borderGray costAmountInput" />
           </div>
           <span class="emptyErrorText addCostError"></span>
-          <button class="addCostBtn alignSelfEnd">اضافه کردن هزینه</button>
+          <button onclick="addCost()" class="addCostBtn alignSelfEnd">
+            اضافه کردن هزینه
+          </button>
         </div>
       </aside>
       <section>
-        <button class="refreshBtn">
+        <button onclick="handleRefresh()" class="refreshBtn">
           <img class="refresh" src="./assets/images/refresh.png" />
         </button>
 
@@ -46,22 +48,22 @@
             <span class="titleText">بودجه</span>
             <img src="./assets/images/budget.png" />
             <span class="fs40 textGreen"
-              >$<span class="budget fs40 textGreen">0</span></span
-            >
+              >$<span class="budget fs40 textGreen"></span
+            ></span>
           </div>
           <div class="titlesBox">
             <span class="titleText">هزینه ها</span>
             <img src="./assets/images/card.png" />
             <span class="fs40 textRed"
-              >$<span class="costs fs40 textRed">0</span></span
-            >
+              >$<span class="costs fs40 textRed"></span
+            ></span>
           </div>
           <div class="titlesBox">
             <span class="titleText">موجودی</span>
             <img src="./assets/images/dollar.png" />
             <span class="fs40 textGreen"
-              >$<span class="balance fs40 textGreen">0</span></span
-            >
+              >$<span class="balance fs40 textGreen"></span
+            ></span>
           </div>
         </div>
         <div class="tableWrapper">

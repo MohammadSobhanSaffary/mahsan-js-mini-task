@@ -7,9 +7,11 @@ let budget = 0;
 let balance = 0;
 let costs = 0;
 let costsItems = [];
+
 //##################//
 //#### HANDELES ####//
 //##################//
+
 const updateDataToServer = async () => {
   try {
     await fetch(`${BASE_URL}/wallet/1`, {
@@ -169,7 +171,6 @@ const handleShowTable = () => {
     document.querySelector("table").classList.add("visible");
   }
 };
-
 const handleRefresh = async () => {
   const res = await fetch(`${BASE_URL}/wallet/1`, {
     method: "PUT",
@@ -195,6 +196,7 @@ const handleRefresh = async () => {
     renderTable();
   }
 };
+
 //####################//
 //#### FETCH_DATA ####//
 //####################//
@@ -214,6 +216,7 @@ const handleGetData = async () => {
   } catch (err) {
     console.log(err);
   }
+  handleShowTable();
   handleShowTable();
 };
 handleGetData();

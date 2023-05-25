@@ -228,3 +228,9 @@ td {
   height: 60px;
   cursor: pointer;
 }
+.hidden{
+  visibility: hidden
+}
+.visible{
+  visibility: visible;
+}

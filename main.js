@@ -7,17 +7,13 @@ const budgetBox = document.querySelector(".budget");
 const balanceBox = document.querySelector(".balance");
 const costsBox = document.querySelector(".costs");
 const calcBudgetBtn = document.querySelector(".calcBudgetBtn");
-const budgetInput = document.querySelector(".budgetInput");
 const costNameInput = document.querySelector(".costNameInput");
 const costAmountInput = document.querySelector(".costAmountInput");
 const addCostBtn = document.querySelector(".addCostBtn");
-const tableBody = document.querySelector("tbody");
-const addBudgetErrorText = document.querySelector(".addBudgetError");
-const addCostErrorText = document.querySelector(".addCostError");
 const refreshBtn = document.querySelector(".refreshBtn");
-let budget = 0;
-let balance = 0;
-let costs = 0;
+let budget = "";
+let balance = "";
+let costs = "";
 let costsItems = [];
 //##################//
 //#### HANDELES ####//
@@ -37,7 +33,6 @@ const updateDataToServer = async () => {
         id: "1",
       }),
     });
-    const data = await res.json();
   } catch (err) {
     console.log(err);
   }
@@ -56,38 +51,75 @@ const generateUuid = () => {
 const setBudget = () => (budgetBox.textContent = budget);
 const setBalance = () => (balanceBox.textContent = balance);
 const setCosts = () => (costsBox.textContent = costs);
-const addBudget = (input) => {
+const addBudget = async (input) => {
+  const addBudgetErrorText = document.querySelector(".addBudgetError");
+  budget += Number(input);
+  balance = budget - costs;
   if (Number(input) >= 0) {
-    budget += Number(input);
-    balance = budget - costs;
-    updateDataToServer();
-    setBalance();
-    setBudget();
-    addBudgetErrorText.textContent = "";
+    const res = await fetch(`${BASE_URL}/wallet/1`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        totalCosts: costs,
+        budget: budget,
+        balance: balance,
+        costsItems: costsItems,
+        id: "1",
+      }),
+    });
+    if (res.ok) {
+      setBalance();
+      setBudget();
+      addBudgetErrorText.textContent = "";
+    } else {
+      budget -= Number(input);
+      balance = budget - costs;
+    }
   } else if (input.trim() === "") {
     addBudgetErrorText.textContent = "این فیلد نمی تواند خالی باشد.";
   }
 };
-const addCost = (costName, costAmount) => {
+const addCost = async (costName, costAmount) => {
+  const addCostErrorText = document.querySelector(".addCostError");
   if (costAmount > 0 && costName.trim() !== "") {
     addCostErrorText.textContent = "";
     costs += Number(costAmount);
     balance = budget - Number(costs);
-    setCosts();
-    setBalance();
-    costsItems.push({
-      name: costName,
-      amount: costAmount,
-      id: generateUuid(),
+    const res = await fetch(`${BASE_URL}/wallet/1`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        totalCosts: costs,
+        budget: budget,
+        balance: balance,
+        costsItems: costsItems,
+        id: "1",
+      }),
     });
-    renderTable();
-    updateDataToServer();
+    if (res.ok) {
+      setCosts();
+      setBalance();
+      costsItems.push({
+        name: costName,
+        amount: costAmount,
+        id: generateUuid(),
+      });
+      renderTable();
+    } else {
+      costs -= Number(costAmount);
+      balance = budget + Number(costs);
+    }
   } else if (costAmount.trim() === "" || costAmount.trim() === "") {
     addCostErrorText.textContent = "پر کردن هردو فیلد الزامی است.";
   }
   handleShowTable();
 };
 const renderTable = () => {
+  const tableBody = document.querySelector("tbody");
   tableBody.innerHTML = "";
   costsItems.forEach((el) => {
     const tr = document.createElement("tr");
@@ -117,9 +149,39 @@ const renderTable = () => {
   });
 };
 const handleShowTable = () => {
-  costsItems.length === 0
-    ? (document.querySelector("table").style.visibility = "hidden")
-    : (document.querySelector("table").style.visibility = "visible");
+  if (costsItems.length === 0) {
+    document.querySelector("table").classList.remove("visible");
+    document.querySelector("table").classList.add("hidden");
+  } else {
+    document.querySelector("table").classList.remove("hidden");
+    document.querySelector("table").classList.add("visible");
+  }
+};
+
+const handleRefresh = async () => {
+  const res = await fetch(`${BASE_URL}/wallet/1`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      totalCosts: "",
+      budget: "",
+      balance: "",
+      costsItems: [],
+      id: "1",
+    }),
+  });
+  if (res.ok) {
+    budget = "";
+    balance = "";
+    costs = "";
+    costsItems = [];
+    setBudget();
+    setCosts();
+    setBalance();
+    renderTable();
+  }
 };
 //####################//
 //#### FETCH_DATA ####//
@@ -136,16 +198,17 @@ const handleGetData = async () => {
     setBudget();
     setBalance();
     renderTable();
-    handleShowTable();
   } catch (err) {
     console.log(err);
   }
+  handleShowTable();
 };
 handleGetData();
 //#####################//
 //#### LISITENERS #####//
 //####################//
 calcBudgetBtn.addEventListener("click", () => {
+  const budgetInput = document.querySelector(".budgetInput");
   addBudget(budgetInput.value);
   budgetInput.value = null;
 });
@@ -153,15 +216,4 @@ addCostBtn.addEventListener("click", () => {
   addCost(costNameInput.value, costAmountInput.value);
   costNameInput.value = null;
   costAmountInput.value = null;
-});
-refreshBtn.addEventListener("click", () => {
-  budget = 0;
-  costs = 0;
-  balance = 0;
-  costsItems = [];
-  setBudget();
-  setCosts();
-  setBalance();
-  updateDataToServer();
-  renderTable();
 });

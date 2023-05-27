@@ -11,22 +11,23 @@ let costsItems = [];
 //##################//
 //#### HANDELES ####//
 //##################//
-
+const putRequest = async () =>
+  await fetch(`${BASE_URL}/wallet/1`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      totalCosts: costs,
+      budget: budget,
+      balance: balance,
+      costsItems: costsItems,
+      id: "1",
+    }),
+  });
 const updateDataToServer = async () => {
   try {
-    await fetch(`${BASE_URL}/wallet/1`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        totalCosts: costs,
-        budget: budget,
-        balance: balance,
-        costsItems: costsItems,
-        id: "1",
-      }),
-    });
+    await putRequest();
   } catch (err) {
     console.log(err);
   }
@@ -48,7 +49,20 @@ const setBudget = () => {
 };
 const setBalance = () => {
   const balanceBox = document.querySelector(".balance");
-  balanceBox.textContent = balance === 0 ? "" : balance;
+  const balanceDollarSign = document.querySelector(".balanceDollarSign");
+  if (balance < 0) {
+    balanceBox.classList.remove("textGreen");
+    balanceDollarSign.classList.remove("textGreen");
+    balanceBox.classList.add("textRed");
+    balanceDollarSign.classList.add("textRed");
+  }
+  if (balance >= 0) {
+    balanceBox.classList.remove("textRed");
+    balanceDollarSign.classList.remove("textRed");
+    balanceBox.classList.add("textGreen");
+    balanceDollarSign.classList.add("textGreen");
+  }
+  balanceBox.textContent = balance === 0 && budget === 0 ? "" : balance;
 };
 const setCosts = () => {
   const costsBox = document.querySelector(".costs");
@@ -60,33 +74,25 @@ const addBudget = async () => {
   if (Number(budgetInput.value) >= 0 && budgetInput.value !== "") {
     budget += Number(budgetInput.value);
     balance = budget - costs;
-    const res = await fetch(`${BASE_URL}/wallet/1`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        totalCosts: costs,
-        budget: budget,
-        balance: balance,
-        costsItems: costsItems,
-        id: "1",
-      }),
-    });
-    if (res.ok) {
-      setBalance();
-      setBudget();
-      addBudgetErrorText.textContent = "";
-    } else {
+    try {
+      const res = await putRequest();
+      if (res.ok) {
+        setBalance();
+        setBudget();
+        addBudgetErrorText.textContent = "";
+      } else {
+        budget -= Number(budgetInput.value);
+        balance = budget - costs;
+      }
+    } catch (err) {
+      console.error(err);
       budget -= Number(budgetInput.value);
       balance = budget - costs;
     }
+    budgetInput.value = null;
   } else if (budgetInput.value.trim() === "") {
-    console.log(addBudgetErrorText);
     addBudgetErrorText.textContent = "این فیلد نمی تواند خالی باشد.";
   }
-  console.log(budgetInput.value.trim() === "");
-  budgetInput.value = null;
 };
 const addCost = async () => {
   const costAmountInput = document.querySelector(".costAmountInput");
@@ -96,40 +102,35 @@ const addCost = async () => {
     addCostErrorText.textContent = "";
     costs += Number(costAmountInput.value);
     balance = budget - costs;
-    const res = await fetch(`${BASE_URL}/wallet/1`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        totalCosts: costs,
-        budget: budget,
-        balance: balance,
-        costsItems: costsItems,
-        id: "1",
-      }),
-    });
-    if (res.ok) {
-      setCosts();
-      setBalance();
-      costsItems.push({
-        name: costNameInput.value,
-        amount: +costAmountInput.value,
-        id: generateUuid(),
-      });
-      renderTable();
-    } else {
+    try {
+      const res = await putRequest();
+      if (res.ok) {
+        setCosts();
+        setBalance();
+        costsItems.push({
+          name: costNameInput.value,
+          amount: +costAmountInput.value,
+          id: generateUuid(),
+        });
+        renderTable();
+      } else {
+        costs -= Number(costAmountInput.value);
+        balance = budget - costs;
+      }
+    } catch (err) {
+      console.error(err);
       costs -= Number(costAmountInput.value);
-      balance = budget + Number(costs);
+      balance = budget - costs;
     }
+    costNameInput.value = null;
+    costAmountInput.value = null;
   } else if (
     costAmountInput.value.trim() === "" ||
     costNameInput.value.trim() === ""
   ) {
     addCostErrorText.textContent = "پر کردن هردو فیلد الزامی است.";
   }
-  costNameInput.value = null;
-  costAmountInput.value = null;
+
   handleShowTable();
 };
 const renderTable = () => {
@@ -172,19 +173,7 @@ const handleShowTable = () => {
   }
 };
 const handleRefresh = async () => {
-  const res = await fetch(`${BASE_URL}/wallet/1`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      totalCosts: 0,
-      budget: 0,
-      balance: 0,
-      costsItems: [],
-      id: "1",
-    }),
-  });
+  const res = await putRequest();
   if (res.ok) {
     budget = 0;
     balance = 0;
@@ -194,7 +183,9 @@ const handleRefresh = async () => {
     setCosts();
     setBalance();
     renderTable();
+    updateDataToServer();
   }
+  handleShowTable();
 };
 
 //####################//
@@ -204,19 +195,21 @@ const handleRefresh = async () => {
 const handleGetData = async () => {
   try {
     const res = await fetch(`${BASE_URL}/wallet`);
-    const data = await res.json();
-    costs = data[0].totalCosts;
-    budget = data[0].budget;
-    balance = data[0].balance;
-    costsItems = data[0].costsItems;
-    setCosts();
-    setBudget();
-    setBalance();
-    renderTable();
+    if (res.ok) {
+      const data = await res.json();
+      costs = data[0].totalCosts;
+      budget = data[0].budget;
+      balance = data[0].balance;
+      costsItems = data[0].costsItems;
+      setCosts();
+      setBudget();
+      setBalance();
+      renderTable();
+    }
   } catch (err) {
     console.log(err);
   }
   handleShowTable();
-  handleShowTable();
 };
 handleGetData();
+console.log(costs);

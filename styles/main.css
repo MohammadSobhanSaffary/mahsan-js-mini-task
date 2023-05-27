@@ -136,7 +136,7 @@ input::-webkit-inner-spin-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rem;
+  gap: 10rem;
 }
 .titleText {
   font-size: 28px;
@@ -228,9 +228,9 @@ td {
   height: 60px;
   cursor: pointer;
 }
-.hidden{
-  visibility: hidden
+.hidden {
+  visibility: hidden;
 }
-.visible{
+.visible {
   visibility: visible;
 }

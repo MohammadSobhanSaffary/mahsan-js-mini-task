@@ -68,6 +68,15 @@ const setCosts = () => {
   const costsBox = document.querySelector(".costs");
   costsBox.textContent = costs === 0 ? "" : costs;
 };
+const handleShowTable = () => {
+  if (costsItems.length === 0) {
+    document.querySelector("table").classList.remove("visible");
+    document.querySelector("table").classList.add("hidden");
+  } else {
+    document.querySelector("table").classList.remove("hidden");
+    document.querySelector("table").classList.add("visible");
+  }
+};
 const addBudget = async () => {
   const addBudgetErrorText = document.querySelector(".addBudgetError");
   const budgetInput = document.querySelector(".budgetInput");
@@ -113,6 +122,7 @@ const addCost = async () => {
           id: generateUuid(),
         });
         renderTable();
+        handleShowTable();
       } else {
         costs -= Number(costAmountInput.value);
         balance = budget - costs;
@@ -163,15 +173,7 @@ const renderTable = () => {
     });
   });
 };
-const handleShowTable = () => {
-  if (costsItems.length === 0) {
-    document.querySelector("table").classList.remove("visible");
-    document.querySelector("table").classList.add("hidden");
-  } else {
-    document.querySelector("table").classList.remove("hidden");
-    document.querySelector("table").classList.add("visible");
-  }
-};
+
 const handleRefresh = async () => {
   const res = await putRequest();
   if (res.ok) {
@@ -212,4 +214,3 @@ const handleGetData = async () => {
   handleShowTable();
 };
 handleGetData();
-console.log(costs);
